@@ -50,7 +50,8 @@ import MASTERCHEF_V2_ABI from '../constants/abis/masterchef-v2.json'
 import MEOWSHI_ABI from '../constants/abis/meowshi.json'
 import MERKLE_DISTRIBUTOR_ABI from '../constants/abis/merkle-distributor.json'
 import MINICHEF_ABI from '../constants/abis/minichef-v2.json'
-import SUMMIT_MINCHEF_ABI from '../constants/abis/summit-minichef-v2.json'
+import METAVICE_MINCHEF_ABI from '../constants/abis/metavice-minichef-v2.json'
+import METAVICE_COMPELX_TIME_REWARDER_ABI from '../constants/abis/metavice-complextime-rewarder.json'
 import MULTICALL2_ABI from '../constants/abis/multicall2.json'
 import ROUTER_ABI from '../constants/abis/router.json'
 import SUSHI_ABI from '../constants/abis/sushi.json'
@@ -153,9 +154,9 @@ export function useMiniChefContract(withSignerIfPossible?: boolean): Contract | 
   return useContract(chainId && MINICHEF_ADDRESS[chainId], MINICHEF_ABI, withSignerIfPossible)
 }
 
-export function useSummitMiniChefContract(withSignerIfPossible?: boolean): Contract | null {
+export function useMetaviceMiniChefContract(withSignerIfPossible?: boolean): Contract | null {
   const { chainId } = useActiveWeb3React()
-  return useContract(chainId && MINICHEF_ADDRESS[chainId], SUMMIT_MINCHEF_ABI, withSignerIfPossible)
+  return useContract(chainId && MINICHEF_ADDRESS[chainId], METAVICE_MINCHEF_ABI, withSignerIfPossible)
 }
 
 export function useFactoryContract(): Contract | null {
@@ -206,6 +207,10 @@ export function useComplexRewarderContract(address, withSignerIfPossible?: boole
 
 export function useSummitComplexRewarderContract(address, withSignerIfPossible?: boolean): Contract | null {
   return useContract(address, SUMMIT_COMPLEX_REWARDER_ABI, withSignerIfPossible)
+}
+
+export function useMetaviceComplexRewarderContract(address, withSignerIfPossible?: boolean): Contract | null {
+  return useContract(address, METAVICE_COMPELX_TIME_REWARDER_ABI, withSignerIfPossible)
 }
 
 export function useCloneRewarderContract(address, withSignerIfPossibe?: boolean): Contract | null {

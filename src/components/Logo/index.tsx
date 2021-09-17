@@ -33,7 +33,7 @@ const Logo: FC<LogoProps> = ({ srcs, width, height, style, alt = '', className, 
         height={height}
         alt={alt}
         layout="fixed"
-        className={classNames('rounded', className)}
+        className={classNames('rounded-full', className)}
         style={style}
         {...rest}
       />

@@ -66,6 +66,8 @@ function Farm(): JSX.Element {
 
   const averageBlockTime = useAverageBlockTime()
 
+  console.log('averageBlockTime:', averageBlockTime)
+
   // const masterChefV1TotalAllocPoint = useMasterChefV1TotalAllocPoint()
 
   // const masterChefV1SushiPerBlock = useMasterChefV1SushiPerBlock()
@@ -82,28 +84,28 @@ function Farm(): JSX.Element {
 
   const testFarm = {
     accSushiPerShare: '',
-    allocPoint: '100',
-    balance: '316227765016',
+    allocPoint: 100,
+    balance: 150000000000,
     chef: 2,
-    id: '0',
-    lastRewardTime: '1631266290',
+    id: 0,
+    lastRewardTime: 1631786674,
     miniChef: {
-      id: '0x962b210b559d7062b59e170f4377C20c7da4FaD8',
-      sushiPerSecond: '1300000000000000',
-      totalAllocPoint: '100',
+      id: '0x4d79613a17a02eD033ca2b8b8c46C44c1c62f8db',
+      sushiPerSecond: 130000000000000,
+      totalAllocPoint: 100,
     },
     owner: {
-      id: '0x962b210b559d7062b59e170f4377C20c7da4FaD8',
-      sushiPerSecond: '1300000000000000',
-      totalAllocPoint: '100',
+      id: '0x4d79613a17a02eD033ca2b8b8c46C44c1c62f8db',
+      sushiPerSecond: 130000000000000,
+      totalAllocPoint: 100,
     },
-    pair: '0x942f5bb4AC39Ae5Ff0ef0e4aA8D1CA998C52a5b6',
-    slpBalance: '8194046008108',
-    userCount: '0',
+    pair: '0x455F943e1c199de2Dd4524F221aB2b94ddA115bA',
+    slpBalance: 0,
+    userCount: 0,
     rewarder: {
-      id: '0x201c900BBfEC89D9d9297c1dF8F187f07F99f8d7',
-      rewardPerSecond: '1300000000000000',
-      rewardToken: '0x2f5231532190942Afa974632ED4586c5593d7Baa',
+      id: '0xAfd8c7189aE4a71c2e192cf9FF57a24E0BBa2b3B',
+      rewardPerSecond: 130000000000000,
+      rewardToken: '0x455F943e1c199de2Dd4524F221aB2b94ddA115bA',
     },
   }
 
@@ -126,11 +128,12 @@ function Farm(): JSX.Element {
 
     // const type = swapPair ? PairType.SWAP : PairType.KASHI
 
-    const type = PairType.SWAP
+    const type = PairType.SINGLE
 
     const pair = {
       decimals: 18,
-      id: '0x942f5bb4AC39Ae5Ff0ef0e4aA8D1CA998C52a5b6',
+      type,
+      id: '0x455F943e1c199de2Dd4524F221aB2b94ddA115bA',
       reserve0: '1928359.887405995540289756',
       reserve1: '1920966.04641',
       reserveETH: '1183.351142427706157233201110976883',
@@ -138,25 +141,16 @@ function Farm(): JSX.Element {
       timestamp: '1621898381',
       token0: {
         derivedETH: '0.0003068283960261003490764609134664169',
-        id: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
-        name: 'Wrapped AVAX',
-        symbol: 'WAVAX',
+        id: '0x455F943e1c199de2Dd4524F221aB2b94ddA115bA',
+        name: 'Metavice',
+        symbol: 'SERVE',
         totalSupply: '16840',
       },
       token0Price: '1.003849022219738620606344213098808',
-      token1: {
-        derivedETH: '0.0.034',
-        id: '0xc7198437980c041c805A1EDcbA50c1Ce5db95118',
-        name: 'Tether USD',
-        symbol: 'USDT',
-        totalSupply: '16840',
-      },
-
       token1Price: '0.9961657359477946627790088931105365',
       totalSupply: '0.000000316227765016',
       trackedReserveETH: '1183.351142427706157233201110976883',
       txCount: '81365',
-      type: 0,
       untrackedVolumeUSD: '46853896.79482616671033425777223395',
       volumeUSD: '46844749.23711596607606598865310647',
     }
@@ -174,28 +168,25 @@ function Farm(): JSX.Element {
         const rewardPerBlock = rewardPerSecond * averageBlockTime
         const rewardPerDay = rewardPerBlock * blocksPerDay
 
+        console.log('rewardPerSecond:', rewardPerSecond)
+
         const reward = {
-          [ChainId.AVALANCHE]: {
-            token: 'SMT',
-            icon: '/Metavice.png',
+          [ChainId.RINKEBY]: {
+            token: 'SERVE',
+            icon: '/serve.png',
             rewardPrice: 0.001,
+            rewardPerBlock,
+            rewardPerDay,
           },
         }
 
         return [
           {
-            token: 'SMT',
-            icon: '/Metavice.png',
+            token: 'SERVE',
+            icon: '/serve.png',
             rewardPrice: 0.00001,
-            rewardPerBlock: sushiPerBlock,
-            rewardPerDay: sushiPerDay,
-          },
-          {
-            token: 'SMT',
-            icon: '/Metavice.png',
-            rewardPrice: 0.00001,
-            rewardPerBlock: rewardPerBlock,
-            rewardPerDay: rewardPerDay,
+            rewardPerBlock: sushiPerBlock + rewardPerBlock,
+            rewardPerDay: sushiPerDay + rewardPerDay,
           },
         ]
       }
@@ -204,9 +195,11 @@ function Farm(): JSX.Element {
 
     const rewards = getRewards()
 
+    console.log('rewards:', rewards)
+
     const balance = Number(pool.balance / 1e18) // swapPair ? Number(pool.balance / 1e18) : pool.balance / 10 ** kashiPair.token0.decimals
 
-    const tvl = (balance / Number(pair.totalSupply)) * Number(pair.reserveUSD)
+    const tvl = 100 // (balance / Number(pair.totalSupply)) * Number(pair.reserveUSD)
 
     const roiPerBlock =
       rewards.reduce((previousValue, currentValue) => {
@@ -243,8 +236,8 @@ function Farm(): JSX.Element {
   }
 
   const FILTER = {
-    all: (farm) => farm.allocPoint !== '0',
-    '2x': (farm) => (farm.chef === Chef.MASTERCHEF_V2 || farm.chef === Chef.MINICHEF) && farm.allocPoint !== '0',
+    all: (farm) => farm.allocPoint !== 0,
+    '2x': (farm) => (farm.chef === Chef.MASTERCHEF_V2 || farm.chef === Chef.MINICHEF) && farm.allocPoint !== 0,
   }
 
   const data = farms.map(map).filter((farm) => {
@@ -288,7 +281,7 @@ function Farm(): JSX.Element {
           </div>
           <FarmList farms={filtered} term={term} /> */}
 
-        <div className="flex items-center text-lg font-bold text-high-emphesis whitespace-nowrap">
+        <div className="flex items-center text-3xl font-bold text-high-emphesis whitespace-nowrap">
           Farms{' '}
           <div className="w-full h-0 ml-4 font-bold bg-transparent border border-b-0 border-transparent rounded text-high-emphesis md:border-gradient-r-blue-pink-dark-800 opacity-20"></div>
         </div>
@@ -299,6 +292,6 @@ function Farm(): JSX.Element {
   )
 }
 
-Farm.Guard = NetworkGuard([ChainId.AVALANCHE])
+Farm.Guard = NetworkGuard([ChainId.RINKEBY])
 
 export default Farm

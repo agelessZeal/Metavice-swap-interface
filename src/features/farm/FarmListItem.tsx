@@ -7,12 +7,13 @@ import Image from '../../components/Image'
 import { PairType } from './enum'
 import React from 'react'
 import { useCurrency } from '../../hooks/Tokens'
+import CurrencyLogo from '../../components/CurrencyLogo'
 
 const FarmListItem = ({ farm, ...rest }) => {
-  const token0 = useCurrency(farm.pair.token0.id)
-  const token1 = useCurrency(farm.pair.token1.id)
+  const token0 = useCurrency(farm.pair.type === PairType.SINGLE ? farm.pair.id : farm.pair.token0.id)
+  const token1 = useCurrency(farm.pair?.token1?.id)
 
-  console.log('FarmListItem:', farm)
+  console.log('MetaviceFarmListItem:', farm, token0)
 
   return (
     <Disclosure {...rest}>
@@ -25,12 +26,13 @@ const FarmListItem = ({ farm, ...rest }) => {
             )}
           >
             <div className="grid grid-cols-4">
-              <div className="flex col-span-2 space-x-4 md:col-span-1">
+              <div className="flex items-center col-span-2 space-x-4 md:col-span-1">
+                {farm.pair.type === PairType.SINGLE && <CurrencyLogo currency={token0} size={'40px'} />}
                 {token1 && token0 && <DoubleLogo currency0={token0} currency1={token1} size={40} />}
 
-                <div className="flex flex-col justify-center">
+                <div className="flex flex-col items-center justify-center">
                   <div>
-                    <span className="font-bold">{farm?.pair?.token0?.symbol}</span>/
+                    <span className="font-bold">{farm?.pair?.token0?.symbol}</span>
                     <span className={farm?.pair?.type === PairType.KASHI ? 'font-thin' : 'font-bold'}>
                       {farm?.pair?.token1?.symbol}
                     </span>

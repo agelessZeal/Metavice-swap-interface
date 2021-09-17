@@ -56,6 +56,10 @@ export function useAverageBlockTime(swrConfig = undefined) {
     return 1.6
   }
 
+  if (chainId === ChainId.RINKEBY) {
+    return 60
+  }
+
   const { data } = useSWR(
     chainId ? ['averageBlockTime', chainId] : null,
     (_, chainId) => getAverageBlockTime(chainId),

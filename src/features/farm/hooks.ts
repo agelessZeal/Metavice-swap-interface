@@ -13,7 +13,7 @@ import {
   useMasterChefContract,
   useMasterChefV2Contract,
   useMiniChefContract,
-  useSummitMiniChefContract,
+  useMetaviceMiniChefContract,
 } from '../../hooks/useContract'
 
 import { Contract } from '@ethersproject/contracts'
@@ -81,10 +81,10 @@ export function useUserInfo(farm, token) {
   return amount ? CurrencyAmount.fromRawAmount(token, amount) : undefined
 }
 
-export function usePendingSummit(farm) {
-  const { account, chainId } = useActiveWeb3React()
+export function useMetaviceMinitChefUserInfo(farm, token) {
+  const { account } = useActiveWeb3React()
 
-  const contract = useSummitMiniChefContract()
+  const contract = useMetaviceMiniChefContract()
 
   const args = useMemo(() => {
     if (!account) {
@@ -93,7 +93,28 @@ export function usePendingSummit(farm) {
     return [String(farm.id), String(account)]
   }, [farm, account])
 
-  const result = useSingleCallResult(args ? contract : null, 'pendingSummit', args)?.result
+  const result = useSingleCallResult(args ? contract : null, 'userInfo', args)?.result
+
+  const value = result?.[0]
+
+  const amount = value ? JSBI.BigInt(value.toString()) : undefined
+
+  return amount ? CurrencyAmount.fromRawAmount(token, amount) : undefined
+}
+
+export function usePendingMetavice(farm) {
+  const { account, chainId } = useActiveWeb3React()
+
+  const contract = useMetaviceMiniChefContract()
+
+  const args = useMemo(() => {
+    if (!account) {
+      return
+    }
+    return [String(farm.id), String(account)]
+  }, [farm, account])
+
+  const result = useSingleCallResult(args ? contract : null, 'pendingMetavice', args)?.result
 
   const value = result?.[0]
 

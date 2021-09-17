@@ -223,9 +223,8 @@ export const SUSHI: ChainTokenMap = {
 
 // SUSHI
 export const SERVE: ChainTokenMap = {
-  // [ChainId.ARBITRUM]: new Token(ChainId.ARBITRUM, SUSHI_ADDRESS[ChainId.ARBITRUM], 18, 'SUSHI', 'SushiToken'),
-  [ChainId.BSC]: new Token(ChainId.BSC, '0x2f5231532190942Afa974632ED4586c5593d7Baa', 18, 'SERVE', 'Metavice'),
-  // [ChainId.HECO]: new Token(ChainId.HECO, SUSHI_ADDRESS[ChainId.HECO], 18, 'SUSHI', 'SushiToken'),
+  [ChainId.BSC]: new Token(ChainId.BSC, '0x455F943e1c199de2Dd4524F221aB2b94ddA115bA', 18, 'SERVE', 'Metavice'),
+  [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, '0x455F943e1c199de2Dd4524F221aB2b94ddA115bA', 18, 'SERVE', 'Metavice'),
 }
 
 export const WETH9_EXTENDED: { [chainId: number]: Token } = {

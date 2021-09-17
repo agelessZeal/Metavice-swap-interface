@@ -5,7 +5,7 @@ import Logo from '../Logo'
 import { WrappedTokenInfo } from '../../state/lists/wrappedTokenInfo'
 import { getMaticTokenLogoURL } from '../../constants/maticTokenMapping'
 import useHttpLocations from '../../hooks/useHttpLocations'
-import Image from 'next/image'
+import Image from '../../components/Image'
 export const getTokenLogoURL = (address: string, chainId: ChainId) => {
   let imageURL
   if (chainId === ChainId.MAINNET) {

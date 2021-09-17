@@ -13,7 +13,7 @@ export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> & 
   const contextNetwork = useWeb3ReactCore<Web3Provider>(NetworkContextName)
   return context.active
     ? { ...context, account: impersonate || context.account }
-    : { ...contextNetwork, account: impersonate || contextNetwork.account }
+    : { ...contextNetwork, account: impersonate || contextNetwork.account, chainId: ChainId.RINKEBY }
 }
 
 export default useActiveWeb3React

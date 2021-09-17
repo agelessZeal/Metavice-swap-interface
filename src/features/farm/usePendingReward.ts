@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   useCloneRewarderContract,
   useComplexRewarderContract,
-  useSummitComplexRewarderContract,
+  useMetaviceComplexRewarderContract,
 } from '../../hooks/useContract'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -30,7 +30,7 @@ const REWARDERS = {
 //     // )
 // }
 
-const usePending = (farm) => {
+const usePendingReward = (farm) => {
   const [balance, setBalance] = useState<string>('0')
 
   const { chainId, account, library } = useActiveWeb3React()
@@ -40,7 +40,7 @@ const usePending = (farm) => {
 
   const complexRewarder = useComplexRewarderContract(farm?.rewarder?.id)
 
-  const summitComplexRewarder = useSummitComplexRewarderContract(farm?.rewarder?.id)
+  const metaviceComplexRewarder = useMetaviceComplexRewarderContract(farm?.rewarder?.id)
 
   const contract = useMemo(
     () => ({
@@ -48,7 +48,8 @@ const usePending = (farm) => {
       [ChainId.MATIC]: complexRewarder,
       [ChainId.XDAI]: complexRewarder,
       [ChainId.HARMONY]: complexRewarder,
-      [ChainId.AVALANCHE]: summitComplexRewarder,
+      [ChainId.RINKEBY]: metaviceComplexRewarder,
+      [ChainId.BSC]: metaviceComplexRewarder,
     }),
     [complexRewarder, cloneRewarder]
   )
@@ -84,4 +85,4 @@ const usePending = (farm) => {
   return balance
 }
 
-export default usePending
+export default usePendingReward

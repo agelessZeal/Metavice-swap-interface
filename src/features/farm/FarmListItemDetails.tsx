@@ -1,9 +1,9 @@
 import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
-import { ChainId, MASTERCHEF_ADDRESS, MASTERCHEF_V2_ADDRESS, MINICHEF_ADDRESS, Token, ZERO } from '@sushiswap/sdk'
+import { ChainId, MASTERCHEF_ADDRESS, MASTERCHEF_V2_ADDRESS, MINICHEF_ADDRESS, Token, TWO, ZERO } from '@sushiswap/sdk'
 import { Chef, PairType } from './enum'
 import { Disclosure, Transition } from '@headlessui/react'
 import React, { useState } from 'react'
-import { usePendingSushi, useUserInfo, usePendingSummit } from './hooks'
+import { usePendingSushi, useUserInfo, usePendingMetavice, useMetaviceMinitChefUserInfo } from './hooks'
 
 import Button from '../../components/Button'
 import Dots from '../../components/Dots'
@@ -14,7 +14,7 @@ import { t } from '@lingui/macro'
 import { tryParseAmount } from '../../functions/parse'
 import useActiveWeb3React from '../../hooks/useActiveWeb3React'
 import { useLingui } from '@lingui/react'
-import useMasterChef from './useMasterChef'
+import useMetaviceMiniChef from './useMetaviceMiniChef'
 import usePendingReward from './usePendingReward'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { useTransactionAdder } from '../../state/transactions/hooks'
@@ -41,9 +41,9 @@ const FarmListItem = ({ farm }) => {
   const balance = useTokenBalance(account, liquidityToken)
 
   // TODO: Replace these
-  const amount = useUserInfo(farm, liquidityToken)
+  const amount = useMetaviceMinitChefUserInfo(farm, liquidityToken)
 
-  const pendingSummit = usePendingSummit(farm)
+  const pendingMetavice = usePendingMetavice(farm)
 
   const reward = usePendingReward(farm)
 
@@ -54,7 +54,8 @@ const FarmListItem = ({ farm }) => {
       [ChainId.MATIC]: MINICHEF_ADDRESS[ChainId.MATIC],
       [ChainId.XDAI]: MINICHEF_ADDRESS[ChainId.XDAI],
       [ChainId.HARMONY]: MINICHEF_ADDRESS[ChainId.HARMONY],
-      [ChainId.AVALANCHE]: MINICHEF_ADDRESS[ChainId.AVALANCHE],
+      [ChainId.RINKEBY]: MINICHEF_ADDRESS[ChainId.RINKEBY],
+      [ChainId.BSC]: MINICHEF_ADDRESS[ChainId.BSC],
     },
   }
 
@@ -63,7 +64,7 @@ const FarmListItem = ({ farm }) => {
 
   const [approvalState, approve] = useApproveCallback(typedDepositValue, APPROVAL_ADDRESSES[farm.chef][chainId])
 
-  const { deposit, withdraw, harvest } = useMasterChef(farm.chef)
+  const { deposit, withdraw, harvest } = useMetaviceMiniChef()
 
   return (
     <Transition
@@ -95,7 +96,7 @@ const FarmListItem = ({ farm }) => {
                   color="blue"
                   size="xs"
                   onClick={() => {
-                    if (!balance.equalTo(ZERO)) {
+                    if (balance && !balance.equalTo(ZERO)) {
                       setDepositValue(balance.toFixed(liquidityToken.decimals))
                     }
                   }}
@@ -120,8 +121,9 @@ const FarmListItem = ({ farm }) => {
                     const tx = await deposit(farm.id, depositValue.toBigNumber(liquidityToken?.decimals))
 
                     addTransaction(tx, {
-                      summary: `Deposit ${farm.pair.token0.name}/${farm.pair.token1.name}`,
+                      summary: `Deposit`,
                     })
+                    setDepositValue('')
                   } catch (error) {
                     console.error(error)
                   }
@@ -152,7 +154,7 @@ const FarmListItem = ({ farm }) => {
                   color="pink"
                   size="xs"
                   onClick={() => {
-                    if (!amount.equalTo(ZERO)) {
+                    if (amount && !amount.equalTo(ZERO)) {
                       setWithdrawValue(amount.toFixed(liquidityToken.decimals))
                     }
                   }}
@@ -165,7 +167,7 @@ const FarmListItem = ({ farm }) => {
             <Button
               color="pink"
               className="border-0"
-              disabled={pendingTx || !typedWithdrawValue || amount.lessThan(typedWithdrawValue)}
+              disabled={pendingTx || !typedWithdrawValue || amount?.lessThan(typedWithdrawValue)}
               onClick={async () => {
                 setPendingTx(true)
                 try {
@@ -185,7 +187,7 @@ const FarmListItem = ({ farm }) => {
             </Button>
           </div>
         </div>
-        {pendingSummit && pendingSummit.greaterThan(ZERO) && (
+        {pendingMetavice && pendingMetavice.greaterThan(ZERO) && (
           <div className="px-4 pb-4">
             <Button
               color="gradient"
@@ -194,7 +196,7 @@ const FarmListItem = ({ farm }) => {
                 try {
                   const tx = await harvest(farm.id)
                   addTransaction(tx, {
-                    summary: i18n._(t`Harvest ${farm.pair.token0.name}/${farm.pair.token1.name}`),
+                    summary: i18n._(t`Harvest`),
                   })
                 } catch (error) {
                   console.error(error)
@@ -202,7 +204,7 @@ const FarmListItem = ({ farm }) => {
                 setPendingTx(false)
               }}
             >
-              {i18n._(t`Harvest ${formatNumber(pendingSummit.toFixed(18))} Metavice ${
+              {i18n._(t`Harvest ${formatNumber(pendingMetavice.multiply(TWO).toFixed(18))} SERVE ${
                 farm.rewards.length > 1 ? `& ${formatNumber(reward)} ${farm.rewards[1].token}` : null
               }
                 `)}
