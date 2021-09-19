@@ -90,22 +90,22 @@ function Farm(): JSX.Element {
     id: 0,
     lastRewardTime: 1631786674,
     miniChef: {
-      id: '0x4d79613a17a02eD033ca2b8b8c46C44c1c62f8db',
+      id: '0x9996f3Ca9ee326008a3D3f41e7B0feec09B8d1d6',
       sushiPerSecond: 130000000000000,
       totalAllocPoint: 100,
     },
     owner: {
-      id: '0x4d79613a17a02eD033ca2b8b8c46C44c1c62f8db',
+      id: '0x9996f3Ca9ee326008a3D3f41e7B0feec09B8d1d6',
       sushiPerSecond: 130000000000000,
       totalAllocPoint: 100,
     },
-    pair: '0x455F943e1c199de2Dd4524F221aB2b94ddA115bA',
+    pair: '0x3F1d29b611c649eEC1e62bE2237891DD88E1aFe0',
     slpBalance: 0,
     userCount: 0,
     rewarder: {
-      id: '0xAfd8c7189aE4a71c2e192cf9FF57a24E0BBa2b3B',
+      id: '0xa51735D315293B994AdeB49e6b68910D9e073336',
       rewardPerSecond: 130000000000000,
-      rewardToken: '0x455F943e1c199de2Dd4524F221aB2b94ddA115bA',
+      rewardToken: '0x3F1d29b611c649eEC1e62bE2237891DD88E1aFe0',
     },
   }
 
@@ -133,7 +133,7 @@ function Farm(): JSX.Element {
     const pair = {
       decimals: 18,
       type,
-      id: '0x455F943e1c199de2Dd4524F221aB2b94ddA115bA',
+      id: '0x3F1d29b611c649eEC1e62bE2237891DD88E1aFe0',
       reserve0: '1928359.887405995540289756',
       reserve1: '1920966.04641',
       reserveETH: '1183.351142427706157233201110976883',
@@ -141,7 +141,7 @@ function Farm(): JSX.Element {
       timestamp: '1621898381',
       token0: {
         derivedETH: '0.0003068283960261003490764609134664169',
-        id: '0x455F943e1c199de2Dd4524F221aB2b94ddA115bA',
+        id: '0x3F1d29b611c649eEC1e62bE2237891DD88E1aFe0',
         name: 'Metavice',
         symbol: 'SERVE',
         totalSupply: '16840',
@@ -199,7 +199,7 @@ function Farm(): JSX.Element {
 
     const balance = Number(pool.balance / 1e18) // swapPair ? Number(pool.balance / 1e18) : pool.balance / 10 ** kashiPair.token0.decimals
 
-    const tvl = 100 // (balance / Number(pair.totalSupply)) * Number(pair.reserveUSD)
+    const tvl = 1 // (balance / Number(pair.totalSupply)) * Number(pair.reserveUSD)
 
     const roiPerBlock =
       rewards.reduce((previousValue, currentValue) => {
@@ -292,6 +292,6 @@ function Farm(): JSX.Element {
   )
 }
 
-Farm.Guard = NetworkGuard([ChainId.RINKEBY])
+Farm.Guard = NetworkGuard([ChainId.BSC])
 
 export default Farm

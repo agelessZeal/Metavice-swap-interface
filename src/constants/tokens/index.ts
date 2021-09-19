@@ -223,7 +223,7 @@ export const SUSHI: ChainTokenMap = {
 
 // SUSHI
 export const SERVE: ChainTokenMap = {
-  [ChainId.BSC]: new Token(ChainId.BSC, '0x455F943e1c199de2Dd4524F221aB2b94ddA115bA', 18, 'SERVE', 'Metavice'),
+  [ChainId.BSC]: new Token(ChainId.BSC, '0x3F1d29b611c649eEC1e62bE2237891DD88E1aFe0', 18, 'SERVE', 'Metavice'),
   [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, '0x455F943e1c199de2Dd4524F221aB2b94ddA115bA', 18, 'SERVE', 'Metavice'),
 }
 

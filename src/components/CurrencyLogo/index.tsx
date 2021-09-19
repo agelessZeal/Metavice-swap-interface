@@ -136,10 +136,15 @@ const CurrencyLogo: FunctionComponent<CurrencyLogoProps> = ({
       return defaultUrls
     }
   }, [currency, uriLocations])
+
   if (currency instanceof WrappedTokenInfo) {
     if (currency.tokenInfo.name === 'Metavice' && currency.tokenInfo.symbol === 'SERVE') {
       return <Image src="/serve.png" width={size} height={size} alt={currency?.symbol} {...rest} />
     }
+  }
+
+  if (currency?.name === 'Metavice' && currency?.symbol === 'SERVE') {
+    return <Image src="/serve.png" width={size} height={size} alt={currency?.symbol} {...rest} />
   }
 
   return <Logo srcs={srcs} width={size} height={size} alt={currency?.symbol} {...rest} />

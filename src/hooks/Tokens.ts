@@ -191,7 +191,7 @@ export function useCurrency(currencyId: string | undefined): Currency | null | u
   if (isETH && isDual) {
     currencyId = WNATIVE_ADDRESS[chainId]
   }
-
+  console.log('currencyId', currencyId)
   const token = useToken(useNative ? undefined : currencyId)
 
   // const extendedEther = useMemo(() => (chainId ? ExtendedEther.onChain(chainId) : undefined), [chainId])
