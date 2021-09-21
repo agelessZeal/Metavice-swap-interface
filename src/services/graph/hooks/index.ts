@@ -72,7 +72,7 @@ export function useMasterChefV2Farms(
 
 export function useMiniChefFarms(variables = undefined, chainId = undefined, swrConfig: SWRConfiguration = undefined) {
   chainId = chainId ?? useActiveWeb3React().chainId
-  const shouldFetch = chainId && [ChainId.MATIC, ChainId.XDAI, ChainId.HARMONY].includes(chainId)
+  const shouldFetch = chainId && [ChainId.BSC].includes(chainId)
   const { data } = useSWR(
     shouldFetch ? ['miniChefFarms', chainId] : null,
     (_, chainId) => getMiniChefFarms(chainId),
@@ -85,16 +85,13 @@ export function useMiniChefFarms(variables = undefined, chainId = undefined, swr
 }
 
 export function useFarms(variables = undefined, chainId = undefined, swrConfig: SWRConfiguration = undefined) {
-  const masterChefV1Farms = useMasterChefV1Farms(variables, chainId)
-  const masterChefV2Farms = useMasterChefV2Farms(variables, chainId)
+  // const masterChefV1Farms = useMasterChefV1Farms(variables, chainId)
+  // const masterChefV2Farms = useMasterChefV2Farms(variables, chainId)
   const miniChefFarms = useMiniChefFarms(variables, chainId)
   // useEffect(() => {
   //   console.log('debug', { masterChefV1Farms, masterChefV2Farms, miniChefFarms })
   // }, [masterChefV1Farms, masterChefV2Farms, miniChefFarms])
-  return useMemo(
-    () => concat(masterChefV1Farms, masterChefV2Farms, miniChefFarms).filter((pool) => pool && pool.pair),
-    [masterChefV1Farms, masterChefV2Farms, miniChefFarms]
-  )
+  return useMemo(() => concat(miniChefFarms).filter((pool) => pool && pool.pair), [miniChefFarms])
 }
 
 export function useMasterChefV1PairAddresses() {
@@ -123,7 +120,7 @@ export function useMasterChefV2PairAddresses() {
 
 export function useMiniChefPairAddresses() {
   const { chainId } = useActiveWeb3React()
-  const shouldFetch = chainId && [ChainId.MATIC, ChainId.XDAI, ChainId.HARMONY].includes(chainId)
+  const shouldFetch = chainId && [ChainId.BSC].includes(chainId)
   const { data } = useSWR(shouldFetch ? ['miniChefPairAddresses', chainId] : null, (_, chainId) =>
     getMiniChefPairAddreses(chainId)
   )
@@ -134,11 +131,8 @@ export function useMiniChefPairAddresses() {
 }
 
 export function useFarmPairAddresses() {
-  const masterChefV1PairAddresses = useMasterChefV1PairAddresses()
-  const masterChefV2PairAddresses = useMasterChefV2PairAddresses()
+  // const masterChefV1PairAddresses = useMasterChefV1PairAddresses()
+  // const masterChefV2PairAddresses = useMasterChefV2PairAddresses()
   const miniChefPairAddresses = useMiniChefPairAddresses()
-  return useMemo(
-    () => concat(masterChefV1PairAddresses, masterChefV2PairAddresses, miniChefPairAddresses),
-    [masterChefV1PairAddresses, masterChefV2PairAddresses, miniChefPairAddresses]
-  )
+  return useMemo(() => concat(miniChefPairAddresses), [miniChefPairAddresses])
 }
