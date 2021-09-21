@@ -45,7 +45,7 @@ import usePoolDatas from '../../services/graph/fetchers/poolData'
 
 import NetworkGuard from '../../guards/Network'
 
-function Farm(): JSX.Element {
+function Stake(): JSX.Element {
   const { chainId } = useActiveWeb3React()
   const router = useRouter()
 
@@ -80,13 +80,13 @@ function Farm(): JSX.Element {
 
   // TODO: Obviously need to sort this out but this is fine for time being,
   // prices are only loaded when needed for a specific network
-  const [sushiPrice, ethPrice, maticPrice, stakePrice, onePrice] = [
-    useAvaxPrice(),
-    useEthPrice(),
-    useMaticPrice(),
-    useStakePrice(),
-    useOnePrice(),
-  ]
+  // const [sushiPrice, ethPrice, maticPrice, stakePrice, onePrice] = [
+  //   useAvaxPrice(),
+  //   useEthPrice(),
+  //   useMaticPrice(),
+  //   useStakePrice(),
+  //   useOnePrice(),
+  // ]
 
   const testFarm = {
     accSushiPerShare: '',
@@ -134,7 +134,7 @@ function Farm(): JSX.Element {
     const fullPair = !poolDataError && poolDatas ? poolDatas[pool.pair] : undefined
     // const kashiPair = kashiPairs?.find((pair) => pair.id === pool.pair)
 
-    const type = swapPair ? PairType.SWAP : PairType.SINGLE
+    const type = swapPair || fullPair ? PairType.SWAP : PairType.SINGLE
 
     // const type = PairType.SINGLE
 
@@ -252,11 +252,8 @@ function Farm(): JSX.Element {
   }
 
   const data = farms
-    // .filter((farm) => {
-    //   pancakePairs && pancakePairs.find((pair) => pair.id === farm.pair)
-    // })
     .filter((farm) => {
-      return farm.pair !== '0x3f1d29b611c649eec1e62be2237891dd88e1afe0'
+      return farm.pair === '0x3f1d29b611c649eec1e62be2237891dd88e1afe0'
     })
     .map(map)
   // .filter((farm) => {
@@ -276,8 +273,8 @@ function Farm(): JSX.Element {
   return (
     <Container id="farm-page" className="grid h-full grid-cols-4 py-4 mx-auto md:py-8 lg:py-12 gap-9" maxWidth="7xl">
       <Head>
-        <title>Farm | Metavice</title>
-        <meta key="description" name="description" content="Farm Pancake LP" />
+        <title>Stake | Metavice</title>
+        <meta key="description" name="description" content="Stake Metavice" />
       </Head>
       {/* <div className={classNames('sticky top-0 hidden lg:block md:col-span-1')} style={{ maxHeight: '40rem' }}>
         <Menu positionsLength={positions.length} />
@@ -309,6 +306,6 @@ function Farm(): JSX.Element {
   )
 }
 
-Farm.Guard = NetworkGuard([ChainId.BSC])
+Stake.Guard = NetworkGuard([ChainId.BSC])
 
-export default Farm
+export default Stake

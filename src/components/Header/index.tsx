@@ -70,9 +70,9 @@ function AppBar(): JSX.Element {
                       )}
 
                       {chainId && featureEnabled(Feature.LIQUIDITY_MINING, chainId) && (
-                        <NavLink href={'/farm'}>
+                        <NavLink href={'/stake'}>
                           <a
-                            id={`farm-nav-link`}
+                            id={`stake-nav-link`}
                             className="p-2 text-baseline text-primary hover:text-high-emphesis focus:text-high-emphesis md:p-3 whitespace-nowrap"
                           >
                             {i18n._(t`Staking`)}
@@ -306,6 +306,18 @@ function AppBar(): JSX.Element {
                     >
                       {' '}
                       {i18n._(t`Farm`)}
+                    </a>
+                  </Link>
+                )}
+
+                {chainId && featureEnabled(Feature.LIQUIDITY_MINING, chainId) && (
+                  <Link href={'/stake'}>
+                    <a
+                      id={`stake-nav-link`}
+                      className="p-2 text-baseline text-primary hover:text-high-emphesis focus:text-high-emphesis md:p-3 whitespace-nowrap"
+                    >
+                      {' '}
+                      {i18n._(t`Staking`)}
                     </a>
                   </Link>
                 )}
