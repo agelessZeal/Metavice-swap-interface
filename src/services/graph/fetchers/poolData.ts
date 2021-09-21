@@ -248,6 +248,9 @@ export interface PoolData {
   volumeUSDWeek: number
   volumeUSDChangeWeek: number
 
+  reserveUSD: number
+  totalSupply: number
+
   totalFees24h: number
   totalFees7d: number
   lpFees24h: number
@@ -272,6 +275,7 @@ interface PoolFields {
   volumeUSD: string
   token0Price: string
   token1Price: string
+  totalSupply: string
   token0: {
     id: string
     symbol: string
@@ -285,13 +289,17 @@ interface PoolFields {
 }
 
 interface FormattedPoolFields
-  extends Omit<PoolFields, 'volumeUSD' | 'reserveUSD' | 'reserve0' | 'reserve1' | 'token0Price' | 'token1Price'> {
+  extends Omit<
+    PoolFields,
+    'volumeUSD' | 'reserveUSD' | 'reserve0' | 'reserve1' | 'token0Price' | 'token1Price' | 'totalSupply'
+  > {
   volumeUSD: number
   reserveUSD: number
   reserve0: number
   reserve1: number
   token0Price: number
   token1Price: number
+  totalSupply: number
 }
 
 interface PoolsQueryResponse {
@@ -323,6 +331,7 @@ const POOL_AT_BLOCK = (block: number | null, pools: string[]) => {
     volumeUSD
     token0Price
     token1Price
+    totalSupply
     token0 {
       id
       symbol
@@ -367,11 +376,14 @@ const parsePoolData = (pairs?: PoolFields[]) => {
     return {}
   }
   return pairs.reduce((accum: { [address: string]: FormattedPoolFields }, poolData) => {
-    const { volumeUSD, reserveUSD, reserve0, reserve1, token0Price, token1Price } = poolData
+    const { volumeUSD, reserveUSD, reserve0, reserve1, token0Price, token1Price, totalSupply } = poolData
+
+    console.log('parsePoolData:', poolData)
     accum[poolData.id] = {
       ...poolData,
       volumeUSD: parseFloat(volumeUSD),
       reserveUSD: parseFloat(reserveUSD),
+      totalSupply: parseFloat(totalSupply),
       reserve0: parseFloat(reserve0),
       reserve1: parseFloat(reserve1),
       token0Price: parseFloat(token0Price),
@@ -437,6 +449,10 @@ const usePoolDatas = (poolAddresses: string[]): PoolDatas => {
 
           const liquidityUSD = current ? current.reserveUSD : 0
 
+          const totalSupply = current ? current.totalSupply : 0
+
+          const reserveUSD = current ? current.reserveUSD : 0
+
           const liquidityUSDChange = getPercentChange(current?.reserveUSD, oneDay?.reserveUSD)
 
           const liquidityToken0 = current ? current.reserve0 : 0
@@ -465,6 +481,8 @@ const usePoolDatas = (poolAddresses: string[]): PoolDatas => {
               token1Price: current.token1Price,
               volumeUSD,
               volumeUSDChange,
+              totalSupply,
+              reserveUSD,
               volumeUSDWeek,
               volumeUSDChangeWeek,
               totalFees24h,
