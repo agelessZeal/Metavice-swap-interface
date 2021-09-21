@@ -41,6 +41,8 @@ import { usePositions } from '../../features/farm/hooks'
 import { useRouter } from 'next/router'
 import useFarmRewards from '../../hooks/useFarmRewards'
 
+import usePoolDatas from '../../services/graph/fetchers/poolData'
+
 import NetworkGuard from '../../guards/Network'
 
 function Farm(): JSX.Element {
@@ -51,11 +53,14 @@ function Farm(): JSX.Element {
 
   const pairAddresses = useMiniChefPairAddresses()
 
+  // console.log('testSwapPairs ', testSwapPairs)
   const pancakePairs = usePancakePairs({
     where: {
       id_in: pairAddresses,
     },
   })
+
+  const { error: poolDataError, data: poolDatas } = usePoolDatas(pairAddresses)
 
   // const kashiPairs = useKashiPairs({
   //   where: {
@@ -68,10 +73,6 @@ function Farm(): JSX.Element {
   const positions = usePositions()
 
   const averageBlockTime = useAverageBlockTime()
-
-  console.log('useMiniChefPairAddresses:', pairAddresses, pfarms, pancakePairs)
-
-  console.log('averageBlockTime:', averageBlockTime)
 
   // const masterChefV1TotalAllocPoint = useMasterChefV1TotalAllocPoint()
 
@@ -129,6 +130,8 @@ function Farm(): JSX.Element {
     pool.balance = pool?.balance || pool?.slpBalance
 
     const swapPair = pancakePairs?.find((pair) => pair.id === pool.pair)
+
+    const fullPair = !poolDataError && poolDatas ? poolDatas[pool.pair] : undefined
     // const kashiPair = kashiPairs?.find((pair) => pair.id === pool.pair)
 
     const type = swapPair ? PairType.SWAP : PairType.SINGLE
@@ -159,7 +162,8 @@ function Farm(): JSX.Element {
       untrackedVolumeUSD: '46853896.79482616671033425777223395',
       volumeUSD: '46844749.23711596607606598865310647',
     }
-    const pair = swapPair || metavicePair
+
+    const pair = fullPair ? fullPair : swapPair ? swapPair : metavicePair
 
     const blocksPerHour = 3600 / averageBlockTime
 
@@ -203,9 +207,10 @@ function Farm(): JSX.Element {
 
     console.log('rewards:', rewards)
 
-    const balance = Number(pool.balance / 1e18) // swapPair ? Number(pool.balance / 1e18) : pool.balance / 10 ** kashiPair.token0.decimals
+    const balance = Number(pool.balance / 1e18)
 
-    const tvl = 1 // (balance / Number(pair.totalSupply)) * Number(pair.reserveUSD)
+    const tvl =
+      type === PairType.SINGLE ? balance * 0.1 : (balance / Number(pair.totalSupply)) * Number(pair.reserveUSD)
 
     const roiPerBlock =
       rewards.reduce((previousValue, currentValue) => {
@@ -254,8 +259,6 @@ function Farm(): JSX.Element {
     keys: ['pair.id', 'pair.token0.symbol', 'pair.token1.symbol'],
     threshold: 0.4,
   }
-
-  console.log('resetfarms:', { data })
 
   const { result, term, search } = useFuse({
     data,

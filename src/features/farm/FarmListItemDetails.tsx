@@ -31,8 +31,8 @@ const FarmListItem = ({ farm }) => {
 
   const liquidityToken = new Token(
     chainId,
-    getAddress(farm.pair.id),
-    farm.pair.type === PairType.KASHI ? Number(farm.pair.asset.decimals) : 18,
+    getAddress(farm.pair.id ? farm.pair.id : farm.pair.address),
+    farm.pair.decimals,
     farm.pair.symbol,
     farm.pair.name
   )

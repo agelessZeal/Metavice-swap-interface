@@ -10,8 +10,14 @@ import { useCurrency } from '../../hooks/Tokens'
 import CurrencyLogo from '../../components/CurrencyLogo'
 
 const FarmListItem = ({ farm, ...rest }) => {
-  const token0 = useCurrency(farm.pair.type === PairType.SINGLE ? farm.pair.id : farm.pair.token0.id)
-  const token1 = useCurrency(farm.pair?.token1?.id)
+  const token0 = useCurrency(
+    farm.pair.type === PairType.SINGLE
+      ? farm.pair.id
+      : farm.pair.token0.id
+      ? farm.pair.token0.id
+      : farm.pair.token0.address
+  )
+  const token1 = useCurrency(farm.pair?.token1?.id ? farm.pair?.token1?.id : farm.pair?.token1?.address)
 
   console.log('MetaviceFarmListItem:', farm, token0)
 
@@ -33,9 +39,11 @@ const FarmListItem = ({ farm, ...rest }) => {
                 <div className="flex flex-col items-center justify-center">
                   <div>
                     <span className="font-bold">{farm?.pair?.token0?.symbol}</span>
-                    <span className={farm?.pair?.type === PairType.KASHI ? 'font-thin' : 'font-bold'}>
-                      {farm?.pair?.token1?.symbol}
-                    </span>
+                    {farm.pair.type === PairType.SWAP && (
+                      <span className={farm?.pair?.type === PairType.KASHI ? 'font-thin' : 'font-bold'}>
+                        /{farm?.pair?.token1?.symbol}
+                      </span>
+                    )}
                   </div>
                   {/* {farm?.pair?.type === PairType.SWAP && (
                     <div className="text-xs md:text-base text-secondary">SushiSwap Farm</div>
