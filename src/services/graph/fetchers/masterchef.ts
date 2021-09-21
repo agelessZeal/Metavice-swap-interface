@@ -21,7 +21,7 @@ export const MINICHEF = {
 }
 
 export const miniChef = async (query, chainId = ChainId.MAINNET, variables = undefined) =>
-  request(`${GRAPH_HOST[chainId]}/subgraphs/name/${MINICHEF[chainId]}`, query, variables)
+  request(`https://api.thegraph.com/subgraphs/name/agelesszeal/metavice-mini-chef2`, query, variables)
 
 export const MASTERCHEF_V2 = {
   [ChainId.MAINNET]: 'sushiswap/master-chefv2',
@@ -87,7 +87,6 @@ export const getMiniChefFarms = async (chainId = ChainId.MAINNET, variables = un
 }
 
 export const getMiniChefPairAddreses = async (chainId = ChainId.MAINNET) => {
-  console.debug('getMiniChefPairAddreses')
   const { pools } = await miniChef(miniChefPairAddressesQuery, chainId)
   return pools
 }
