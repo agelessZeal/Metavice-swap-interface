@@ -209,6 +209,44 @@ export const pairsQuery = gql`
   ${pairFieldsQuery}
 `
 
+export const PancakePairFieldsQuery = gql`
+  fragment pairFields on Pair {
+    id
+    name
+    hash
+    block
+    timestamp
+    token0 {
+      ...PairToken
+    }
+    token1 {
+      ...PairToken
+    }
+  }
+  fragment PairToken on Token {
+    id
+    name
+    symbol
+    decimals
+  }
+`
+
+export const pancakePairsQuery = gql`
+  query pair($skip: Int = 0, $first: Int = 1000, $where: Pair_filter, $block: Block_height) {
+    pairs(
+      skip: $skip
+      first: $first
+      orderBy: $orderBy
+      orderDirection: $orderDirection
+      block: $block
+      where: $where
+    ) {
+      ...pairFields
+    }
+  }
+  ${PancakePairFieldsQuery}
+`
+
 export const pairsTimeTravelQuery = gql`
   query pairsTimeTravelQuery($first: Int! = 1000, $pairAddresses: [Bytes]!, $block: Block_height!) {
     pairs(

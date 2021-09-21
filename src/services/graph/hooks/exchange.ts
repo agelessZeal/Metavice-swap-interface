@@ -21,6 +21,7 @@ import {
   getTransactions,
   getTruPrice,
   getYggPrice,
+  pancakeGetPairs,
 } from '../fetchers'
 import { getEthPrice, getPairs } from '../fetchers'
 import useSWR, { SWRConfiguration } from 'swr'
@@ -217,6 +218,23 @@ export function useSushiPairs(
   const { data } = useSWR(
     shouldFetch ? ['sushiPairs', chainId, JSON.stringify(variables)] : null,
     (_, chainId) => getPairs(chainId, variables, query),
+    swrConfig
+  )
+  return data
+}
+
+export function usePancakePairs(
+  variables = undefined,
+  query = undefined,
+  chainId = undefined,
+  swrConfig: SWRConfiguration = undefined
+) {
+  const { chainId: chainIdSelected } = useActiveWeb3React()
+  chainId = chainId ?? chainIdSelected
+  const shouldFetch = chainId
+  const { data } = useSWR(
+    shouldFetch ? ['pancakePairs', chainId, JSON.stringify(variables)] : null,
+    () => pancakeGetPairs(variables, query),
     swrConfig
   )
   return data

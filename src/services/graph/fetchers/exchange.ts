@@ -11,6 +11,7 @@ import {
   tokenSubsetQuery,
   tokensQuery,
   transactionsQuery,
+  pancakePairsQuery,
 } from '../queries'
 
 import { ChainId } from '@sushiswap/sdk'
@@ -30,10 +31,18 @@ export const EXCHANGE = {
 }
 
 export const exchange = async (chainId = ChainId.MAINNET, query, variables = {}) =>
-  pager(`${GRAPH_HOST[chainId]}/subgraphs/name/${EXCHANGE[chainId]}`, query, variables)
+  pager(`https://bsc.streamingfast.io/subgraphs/name/pancakeswap/exchange-v2`, query, variables)
 
 export const getPairs = async (chainId = ChainId.MAINNET, variables = undefined, query = pairsQuery) => {
   const { pairs } = await exchange(chainId, query, variables)
+  return pairs
+}
+
+export const pancakePairTrack = async (query, variables = {}) =>
+  pager(`https://api.thegraph.com/subgraphs/name/pancakeswap/pairs`, query, variables)
+
+export const pancakeGetPairs = async (variables = undefined, query = pancakePairsQuery) => {
+  const { pairs } = await pancakePairTrack(query, variables)
   return pairs
 }
 
