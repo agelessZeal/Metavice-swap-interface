@@ -11,6 +11,7 @@ import {
   useKashiPairs,
   useMasterChefV1SushiPerBlock,
   useMasterChefV1TotalAllocPoint,
+  useMiniChefPairAddresses,
   useMaticPrice,
   useMphPrice,
   useOnePrice,
@@ -21,6 +22,8 @@ import {
   useSushiPrice,
   useTruPrice,
   useYggPrice,
+  useMiniChefFarms,
+  usePancakePairs,
 } from '../../services/graph'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -46,13 +49,13 @@ function Farm(): JSX.Element {
 
   const type = router.query.filter == null ? 'all' : (router.query.filter as string)
 
-  // const pairAddresses = useFarmPairAddresses()
+  const pairAddresses = useMiniChefPairAddresses()
 
-  // const swapPairs = useSushiPairs({
-  //   where: {
-  //     id_in: pairAddresses,
-  //   },
-  // })
+  const pancakePairs = usePancakePairs({
+    where: {
+      id_in: pairAddresses,
+    },
+  })
 
   // const kashiPairs = useKashiPairs({
   //   where: {
@@ -60,11 +63,13 @@ function Farm(): JSX.Element {
   //   },
   // })
 
-  // const pfarms = useFarms()
+  const pfarms = useMiniChefFarms()
 
   const positions = usePositions()
 
   const averageBlockTime = useAverageBlockTime()
+
+  console.log('useMiniChefPairAddresses:', pairAddresses, pfarms, pancakePairs)
 
   console.log('averageBlockTime:', averageBlockTime)
 
@@ -91,12 +96,12 @@ function Farm(): JSX.Element {
     lastRewardTime: 1631786674,
     miniChef: {
       id: '0x9996f3Ca9ee326008a3D3f41e7B0feec09B8d1d6',
-      sushiPerSecond: 130000000000000,
+      metavicePerSecond: 130000000000000,
       totalAllocPoint: 100,
     },
     owner: {
       id: '0x9996f3Ca9ee326008a3D3f41e7B0feec09B8d1d6',
-      sushiPerSecond: 130000000000000,
+      metavicePerSecond: 130000000000000,
       totalAllocPoint: 100,
     },
     pair: '0x3F1d29b611c649eEC1e62bE2237891DD88E1aFe0',
@@ -109,7 +114,7 @@ function Farm(): JSX.Element {
     },
   }
 
-  const farms = [testFarm]
+  const farms = pfarms
 
   const blocksPerDay = 86400 / Number(averageBlockTime)
 
@@ -123,14 +128,14 @@ function Farm(): JSX.Element {
     pool.owner = pool?.owner || pool?.masterChef || pool?.miniChef
     pool.balance = pool?.balance || pool?.slpBalance
 
-    // const swapPair = swapPairs?.find((pair) => pair.id === pool.pair)
+    const swapPair = pancakePairs?.find((pair) => pair.id === pool.pair)
     // const kashiPair = kashiPairs?.find((pair) => pair.id === pool.pair)
 
-    // const type = swapPair ? PairType.SWAP : PairType.KASHI
+    const type = swapPair ? PairType.SWAP : PairType.SINGLE
 
-    const type = PairType.SINGLE
+    // const type = PairType.SINGLE
 
-    const pair = {
+    const metavicePair = {
       decimals: 18,
       type,
       id: '0x3F1d29b611c649eEC1e62bE2237891DD88E1aFe0',
@@ -154,14 +159,15 @@ function Farm(): JSX.Element {
       untrackedVolumeUSD: '46853896.79482616671033425777223395',
       volumeUSD: '46844749.23711596607606598865310647',
     }
-    // swapPair || kashiPair
+    const pair = swapPair || metavicePair
 
     const blocksPerHour = 3600 / averageBlockTime
 
     function getRewards() {
       if (pool.chef === Chef.MINICHEF) {
-        const sushiPerSecond = ((pool.allocPoint / pool.miniChef.totalAllocPoint) * pool.miniChef.sushiPerSecond) / 1e18
-        const sushiPerBlock = sushiPerSecond * averageBlockTime
+        const metavicePerSecond =
+          ((pool.allocPoint / pool.miniChef.totalAllocPoint) * pool.miniChef.metavicePerSecond) / 1e18
+        const sushiPerBlock = metavicePerSecond * averageBlockTime
         const sushiPerDay = sushiPerBlock * blocksPerDay
         const rewardPerSecond =
           ((pool.allocPoint / pool.miniChef.totalAllocPoint) * pool.rewarder.rewardPerSecond) / 1e18
@@ -249,7 +255,7 @@ function Farm(): JSX.Element {
     threshold: 0.4,
   }
 
-  // console.log({ data })
+  console.log('resetfarms:', { data })
 
   const { result, term, search } = useFuse({
     data,
