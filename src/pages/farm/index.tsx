@@ -46,8 +46,8 @@ import usePoolDatas from '../../services/graph/fetchers/poolData'
 import NetworkGuard from '../../guards/Network'
 
 function Farm(): JSX.Element {
-  const { chainId } = useActiveWeb3React()
-  const router = useRouter()
+  // const { chainId } = useActiveWeb3React()
+  // const router = useRouter()
 
   // const type = router.query.filter == null ? 'all' : (router.query.filter as string)
 
@@ -70,7 +70,7 @@ function Farm(): JSX.Element {
 
   const pfarms = useMiniChefFarms()
 
-  const positions = usePositions()
+  // const positions = usePositions()
 
   const averageBlockTime = useAverageBlockTime()
 
@@ -80,13 +80,13 @@ function Farm(): JSX.Element {
 
   // TODO: Obviously need to sort this out but this is fine for time being,
   // prices are only loaded when needed for a specific network
-  const [sushiPrice, ethPrice, maticPrice, stakePrice, onePrice] = [
-    useAvaxPrice(),
-    useEthPrice(),
-    useMaticPrice(),
-    useStakePrice(),
-    useOnePrice(),
-  ]
+  // const [sushiPrice, ethPrice, maticPrice, stakePrice, onePrice] = [
+  //   useAvaxPrice(),
+  //   useEthPrice(),
+  //   useMaticPrice(),
+  //   useStakePrice(),
+  //   useOnePrice(),
+  // ]
 
   const testFarm = {
     accSushiPerShare: '',
@@ -178,8 +178,6 @@ function Farm(): JSX.Element {
         const rewardPerBlock = rewardPerSecond * averageBlockTime
         const rewardPerDay = rewardPerBlock * blocksPerDay
 
-        console.log('rewardPerSecond:', rewardPerSecond)
-
         const reward = {
           [ChainId.RINKEBY]: {
             token: 'SERVE',
@@ -194,7 +192,7 @@ function Farm(): JSX.Element {
           {
             token: 'SERVE',
             icon: '/serve.png',
-            rewardPrice: 0.00001,
+            rewardPrice: 0.001,
             rewardPerBlock: sushiPerBlock + rewardPerBlock,
             rewardPerDay: sushiPerDay + rewardPerDay,
           },
@@ -204,8 +202,6 @@ function Farm(): JSX.Element {
     }
 
     const rewards = getRewards()
-
-    console.log('rewards:', rewards)
 
     const balance = Number(pool.balance / 1e18)
 
@@ -225,11 +221,11 @@ function Farm(): JSX.Element {
 
     const roiPerYear = roiPerMonth * 12
 
-    const position = positions.find((position) => position.id === pool.id && position.chef === pool.chef)
+    // const position = positions.find((position) => position.id === pool.id && position.chef === pool.chef)
 
     return {
       ...pool,
-      ...position,
+      // ...position,
       pair: {
         ...pair,
         decimals: 18,

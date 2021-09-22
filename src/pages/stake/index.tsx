@@ -146,7 +146,7 @@ function Stake(): JSX.Element {
         symbol: 'SERVE',
         totalSupply: '16840',
       },
-      priceUSD: 0.1,
+      priceUSD: 0.001,
     }
 
     if (!fullPair && !swapPair && pool?.pair) {
@@ -192,7 +192,7 @@ function Stake(): JSX.Element {
           [ChainId.RINKEBY]: {
             token: 'SERVE',
             icon: '/serve.png',
-            rewardPrice: 0.1,
+            rewardPrice: 0.001,
             rewardPerBlock,
             rewardPerDay,
           },
@@ -202,7 +202,7 @@ function Stake(): JSX.Element {
           {
             token: 'SERVE',
             icon: '/serve.png',
-            rewardPrice: 0.1,
+            rewardPrice: 0.001,
             rewardPerBlock: sushiPerBlock + rewardPerBlock,
             rewardPerDay: sushiPerDay + rewardPerDay,
           },
