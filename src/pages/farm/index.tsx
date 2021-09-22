@@ -49,7 +49,7 @@ function Farm(): JSX.Element {
   const { chainId } = useActiveWeb3React()
   const router = useRouter()
 
-  const type = router.query.filter == null ? 'all' : (router.query.filter as string)
+  // const type = router.query.filter == null ? 'all' : (router.query.filter as string)
 
   const pairAddresses = useMiniChefPairAddresses()
 
@@ -255,10 +255,11 @@ function Farm(): JSX.Element {
     // .filter((farm) => {
     //   pancakePairs && pancakePairs.find((pair) => pair.id === farm.pair)
     // })
-    .filter((farm) => {
-      return farm.pair !== '0x3f1d29b611c649eec1e62be2237891dd88e1afe0'
-    })
+
     .map(map)
+    .filter((farm) => {
+      return farm.pair?.type === PairType.SWAP
+    })
   // .filter((farm) => {
   //   return type in FILTER ? FILTER[type](farm) : true
   // })

@@ -44,12 +44,14 @@ import useFarmRewards from '../../hooks/useFarmRewards'
 import usePoolDatas from '../../services/graph/fetchers/poolData'
 
 import NetworkGuard from '../../guards/Network'
+import { useCurrency } from '../../hooks/Tokens'
+import useFetchedTokenDatas from '../../services/graph/fetchers/tokenData'
 
 function Stake(): JSX.Element {
   const { chainId } = useActiveWeb3React()
   const router = useRouter()
 
-  const type = router.query.filter == null ? 'all' : (router.query.filter as string)
+  // const type = router.query.filter == null ? 'all' : (router.query.filter as string)
 
   const pairAddresses = useMiniChefPairAddresses()
 
@@ -105,7 +107,7 @@ function Stake(): JSX.Element {
       metavicePerSecond: 130000000000000,
       totalAllocPoint: 100,
     },
-    pair: '0x3F1d29b611c649eEC1e62bE2237891DD88E1aFe0',
+    pair: '0x3ee2200efb3400fabb9aacf31297cbdd1d435d47',
     slpBalance: 0,
     userCount: 0,
     rewarder: {
@@ -138,29 +140,38 @@ function Stake(): JSX.Element {
 
     // const type = PairType.SINGLE
 
-    const metavicePair = {
+    let metavicePair = {
       decimals: 18,
       type,
       id: '0x3F1d29b611c649eEC1e62bE2237891DD88E1aFe0',
-      reserve0: '1928359.887405995540289756',
-      reserve1: '1920966.04641',
-      reserveETH: '1183.351142427706157233201110976883',
-      reserveUSD: '4',
-      timestamp: '1621898381',
       token0: {
-        derivedETH: '0.0003068283960261003490764609134664169',
         id: '0x3F1d29b611c649eEC1e62bE2237891DD88E1aFe0',
         name: 'Metavice',
         symbol: 'SERVE',
         totalSupply: '16840',
       },
-      token0Price: '1.003849022219738620606344213098808',
-      token1Price: '0.9961657359477946627790088931105365',
-      totalSupply: '0.000000316227765016',
-      trackedReserveETH: '1183.351142427706157233201110976883',
-      txCount: '81365',
-      untrackedVolumeUSD: '46853896.79482616671033425777223395',
-      volumeUSD: '46844749.23711596607606598865310647',
+      priceUSD: 0.1,
+    }
+
+    if (!fullPair && !swapPair && pool?.pair) {
+      // const token1 = useCurrency(pool?.pair)
+      const { error: tokenDataError, data: tokenDatas } = useFetchedTokenDatas([pool.pair])
+      if (tokenDatas && !tokenDataError) {
+        console.log('tokenDatas:', tokenDatas)
+        const tokenData = tokenDatas[pool.pair]
+        metavicePair = {
+          decimals: 18,
+          type,
+          id: pool?.pair,
+          token0: {
+            id: pool?.pair,
+            name: tokenData.name,
+            symbol: tokenData.symbol,
+            totalSupply: '16840',
+          },
+          ...tokenData,
+        }
+      }
     }
 
     const pair = fullPair ? fullPair : swapPair ? swapPair : metavicePair
@@ -184,7 +195,7 @@ function Stake(): JSX.Element {
           [ChainId.RINKEBY]: {
             token: 'SERVE',
             icon: '/serve.png',
-            rewardPrice: 0.001,
+            rewardPrice: 0.1,
             rewardPerBlock,
             rewardPerDay,
           },
@@ -194,7 +205,7 @@ function Stake(): JSX.Element {
           {
             token: 'SERVE',
             icon: '/serve.png',
-            rewardPrice: 0.00001,
+            rewardPrice: 0.1,
             rewardPerBlock: sushiPerBlock + rewardPerBlock,
             rewardPerDay: sushiPerDay + rewardPerDay,
           },
@@ -210,7 +221,11 @@ function Stake(): JSX.Element {
     const balance = Number(pool.balance / 1e18)
 
     const tvl =
-      type === PairType.SINGLE ? balance * 0.1 : (balance / Number(pair.totalSupply)) * Number(pair.reserveUSD)
+      type === PairType.SINGLE
+        ? balance * pair.priceUSD
+        : (balance / Number(pair.totalSupply)) * Number(pair.reserveUSD)
+
+    console.log('rewards balance:', balance, tvl, pool)
 
     const roiPerBlock =
       rewards.reduce((previousValue, currentValue) => {
@@ -251,11 +266,9 @@ function Stake(): JSX.Element {
     '2x': (farm) => (farm.chef === Chef.MASTERCHEF_V2 || farm.chef === Chef.MINICHEF) && farm.allocPoint !== 0,
   }
 
-  const data = farms
-    .filter((farm) => {
-      return farm.pair === '0x3f1d29b611c649eec1e62be2237891dd88e1afe0'
-    })
-    .map(map)
+  const data = farms.map(map).filter((farm) => {
+    return farm.pair.type === PairType.SINGLE
+  })
   // .filter((farm) => {
   //   return type in FILTER ? FILTER[type](farm) : true
   // })
