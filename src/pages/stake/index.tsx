@@ -48,8 +48,8 @@ import { useCurrency } from '../../hooks/Tokens'
 import useFetchedTokenDatas from '../../services/graph/fetchers/tokenData'
 
 function Stake(): JSX.Element {
-  const { chainId } = useActiveWeb3React()
-  const router = useRouter()
+  // const { chainId } = useActiveWeb3React()
+  // const router = useRouter()
 
   // const type = router.query.filter == null ? 'all' : (router.query.filter as string)
 
@@ -64,15 +64,11 @@ function Stake(): JSX.Element {
 
   const { error: poolDataError, data: poolDatas } = usePoolDatas(pairAddresses)
 
-  // const kashiPairs = useKashiPairs({
-  //   where: {
-  //     id_in: pairAddresses,
-  //   },
-  // })
+  const { error: tokenDataError, data: tokenDatas } = useFetchedTokenDatas(pairAddresses)
 
   const pfarms = useMiniChefFarms()
 
-  const positions = usePositions()
+  // const positions = usePositions()
 
   const averageBlockTime = useAverageBlockTime()
 
@@ -155,21 +151,22 @@ function Stake(): JSX.Element {
 
     if (!fullPair && !swapPair && pool?.pair) {
       // const token1 = useCurrency(pool?.pair)
-      const { error: tokenDataError, data: tokenDatas } = useFetchedTokenDatas([pool.pair])
-      if (tokenDatas && !tokenDataError) {
-        console.log('tokenDatas:', tokenDatas)
-        const tokenData = tokenDatas[pool.pair]
-        metavicePair = {
-          decimals: 18,
-          type,
-          id: pool?.pair,
-          token0: {
+      if (pool.pair !== '0x3f1d29b611c649eec1e62be2237891dd88e1afe0') {
+        if (tokenDatas && !tokenDataError) {
+          console.log('tokenDatas:', tokenDatas)
+          const tokenData = tokenDatas[pool.pair]
+          metavicePair = {
+            decimals: 18,
+            type,
             id: pool?.pair,
-            name: tokenData.name,
-            symbol: tokenData.symbol,
-            totalSupply: '16840',
-          },
-          ...tokenData,
+            token0: {
+              id: pool?.pair,
+              name: tokenData.name,
+              symbol: tokenData.symbol,
+              totalSupply: '16840',
+            },
+            ...tokenData,
+          }
         }
       }
     }
@@ -240,11 +237,10 @@ function Stake(): JSX.Element {
 
     const roiPerYear = roiPerMonth * 12
 
-    const position = positions.find((position) => position.id === pool.id && position.chef === pool.chef)
+    // const position = positions.find((position) => position.id === pool.id && position.chef === pool.chef)
 
     return {
       ...pool,
-      ...position,
       pair: {
         ...pair,
         decimals: 18,
